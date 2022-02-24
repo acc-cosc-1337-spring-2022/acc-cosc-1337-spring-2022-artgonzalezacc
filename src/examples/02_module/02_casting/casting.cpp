@@ -1,3 +1,10 @@
+#include "casting.h"
+
+int operator_precedence_1(int num1, int num2, int num3)
+{
+    return num1 + num2 + num3;    
+}
+
 
 /*
 Function convert_int_to_double multiplies years times interest_rate
