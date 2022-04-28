@@ -26,3 +26,42 @@ void BankAccount::withdraw(int amount)
         balance -= amount;  
     }
 }
+
+//Free functions
+void display_balance(const BankAccount& account)
+{
+    std::cout<<"Free function balance: "<<account.get_balance()<<"\n";    
+}
+
+BankAccount get_account()
+{
+    BankAccount a;
+
+    return a;
+}
+
+// friend function
+void friend_display_balance(const BankAccount& account)
+{
+    std::cout<<"Friend function balance: "<<account.get_balance()<<"\n";
+}
+
+//overload << operator
+std::ostream& operator<<(std::ostream& out, const BankAccount& account)
+{
+    out<<"Operator << overload balance: "<<account.balance;
+
+    return out;
+}
+
+std::istream& operator>>(std::istream& in, BankAccount& account)
+{
+    int amount;
+
+    std::cout<<"\nEnter amount: ";
+    in>>amount;
+
+    account.deposit(amount);
+
+    return in;
+}
