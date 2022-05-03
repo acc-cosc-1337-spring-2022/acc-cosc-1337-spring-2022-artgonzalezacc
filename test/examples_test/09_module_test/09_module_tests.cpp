@@ -31,3 +31,22 @@ TEST_CASE("Test Vector memberwise copy for stack and pointer class variables")
 	Vector v(3);
 	Vector v1 = v;
 }
+
+TEST_CASE("Test the pointer copy between classes")
+{
+	Vector v(3);
+	Vector v1 = v;
+	v[0] = 5;
+
+	REQUIRE(v[0] != v1[0]);
+}
+
+TEST_CASE("Test overwriting an existing class with a copy")
+{
+	Vector v(3);
+	Vector v1(3);
+	v1 = v;
+	v[0] = 5;
+
+	REQUIRE(v[0] != v1[0]);
+}
