@@ -56,6 +56,41 @@ Vector& Vector::operator=(const Vector& v)
     return *this;
 }
 
+/*
+1-Get v.elements' memory
+2-Get size from v
+3-point v.elements to nothing(nullptr); set v size to 0
+*/
+
+Vector::Vector(Vector&& v)//this will be v1
+: size{v.size}, elements{v.elements}
+{
+    cout<<"Move constructor "<<elements<<"\n";
+    v.size = 0;
+    v.elements = nullptr;
+}
+
+/*
+1-clear original dynamic memory from v (eliminate memory leak)
+2-point elements to v.elements
+3-get size from v
+4-point v.elements to nullptr
+5-set v.size to 0
+*/
+
+Vector& Vector::operator=(Vector&& v)
+{
+    cout<<"Move assignment delete memory "<<elements<<"\n";
+    delete elements;
+    elements = v.elements;
+    cout<<"Move assignment "<<elements<<"\n";
+    size = v.size;
+    v.elements = nullptr;
+    v.size = 0;
+
+    return *this;
+}
+
 Vector::~Vector()
 {
     cout<<"Destructor-delete memory at "<<elements<<"\n";
@@ -73,4 +108,10 @@ void use_heap_vector()
     Vector* v = new Vector(3);//create dynamic memory
     //use memory
     delete v;//delete memory
+}
+
+Vector get_vector()
+{
+    Vector v(3);
+    return v;
 }
