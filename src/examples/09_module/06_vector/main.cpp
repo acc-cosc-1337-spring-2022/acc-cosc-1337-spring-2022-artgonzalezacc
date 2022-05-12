@@ -5,8 +5,12 @@ using std::cout;
 
 int main()
 {  //class template
-    Vector v(3);
-    v = get_vector();
+    Vector<char> v(3);
+    v.PushBack('p');
+
+    cout<<v[0]<<"\n";
+
+    Vector<int> v1(3);
 
     /*std::cout<<"Create vector\n";
     Vector v(3);

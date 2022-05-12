@@ -2,15 +2,16 @@
 
 using std::cout;
 
-/*
-Vector::Vector()
- : size(0)
+template<typename T>
+Vector<T>::Vector()
+ : size(0), capacity(0), elements{nullptr}
 {
 
-}*/
+}
 
-Vector::Vector(std::size_t s)
- : size(s), elements{new int[s]}//create the dynamic array of size s
+template<typename T>
+Vector<T>::Vector(std::size_t s)
+ : size(0), capacity{s}, elements{new T[s]} //create the dynamic array of size s
 {
     cout<<"Constructor(s)-create memory"<<elements<<"\n";
 }
@@ -20,8 +21,9 @@ Vector::Vector(std::size_t s)
 2 Initialize memory for v1
 3 copy element values from v to v1
 */
-Vector::Vector(const Vector& v)
-: size{v.size}, elements{new int[v.size]}
+template<typename T>
+Vector<T>::Vector(const Vector<T>& v)
+: size{v.size}, elements{new T[v.size]}
 {
     cout<<"Execute copy constructor "<<elements<<"\n";
 
@@ -38,9 +40,10 @@ Vector::Vector(const Vector& v)
 4-Point elements memory to temporary memory
 5-Return a reference to this vector
 */
-Vector& Vector::operator=(const Vector& v)
+template<typename T>
+Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
-    int* temp = new int[v.size];
+    T* temp = new T[v.size];
 
     for(std::size_t i=0; i < v.size; ++i)
     {
@@ -61,8 +64,8 @@ Vector& Vector::operator=(const Vector& v)
 2-Get size from v
 3-point v.elements to nothing(nullptr); set v size to 0
 */
-
-Vector::Vector(Vector&& v)//this will be v1
+template<typename T>
+Vector<T>::Vector(Vector<T>&& v)//this will be v1
 : size{v.size}, elements{v.elements}
 {
     cout<<"Move constructor "<<elements<<"\n";
@@ -77,8 +80,8 @@ Vector::Vector(Vector&& v)//this will be v1
 4-point v.elements to nullptr
 5-set v.size to 0
 */
-
-Vector& Vector::operator=(Vector&& v)
+template<typename T>
+Vector<T>& Vector<T>::operator=(Vector<T>&& v)
 {
     cout<<"Move assignment delete memory "<<elements<<"\n";
     delete elements;
@@ -91,27 +94,106 @@ Vector& Vector::operator=(Vector&& v)
     return *this;
 }
 
-Vector::~Vector()
+/*
+1-Make sure new allocation is greater than capacity
+2-Create temp dynamic memory of size new allocation
+3-Copy values from old memory array to temp array
+4-Delete the old array
+5-Set elements to temp memory array
+6-Set capacity = new allocation size
+*/
+template<typename T>
+void Vector<T>::Reserve(std::size_t new_allocation_size)
+{
+    if(new_allocation_size <= capacity)
+    {
+        return;
+    }
+
+    T* temp = new T[new_allocation_size];
+
+    for(std::size_t i=0; i < size; i++)
+    {
+        temp[i] = elements[i];
+    }
+
+    delete []elements;
+
+    elements = temp;
+    capacity = new_allocation_size;
+}
+
+/*
+1-Call reserve function with new allocation size as parameter
+2-Initialize elements beyond size
+3-Set size to new allocation size
+*/
+template<typename T>
+void Vector<T>::Resize(std::size_t new_allocation_size)
+{
+    Reserve(new_allocation_size);
+
+    for(std::size_t i=size; i < new_allocation_size; i++)
+    {
+        elements[i] = 0;
+    }
+
+    size = new_allocation_size;
+}
+
+/*
+1-If capacity 0 call reserve w Reserve Default Size
+2-else if size == space call Reserve w space * reserve default multiplier
+3-Set value to current element at size
+4 Increment the size
+*/
+template<typename T>
+void Vector<T>::PushBack(T value)
+{
+    if(capacity == 0)
+    {
+        Reserve(RESERVE_DEFAULT_SIZE);
+    }
+    else if(capacity == size)
+    {
+        Reserve(capacity * RESERVE_DEFAULT_MULTIPLIER);
+    }
+
+    elements[size] = value;
+    size++;
+}
+
+template<typename T>
+Vector<T>::~Vector()
 {
     cout<<"Destructor-delete memory at "<<elements<<"\n";
     delete[] elements;
 }
 
+
+//tell C++ what data type this template supports
+template class Vector<int>;
+template class Vector<double>;
+template class Vector<char>;
+
+
+
+
 //FREE FUNCTIONS
 void use_stack_vector()
 {
-    Vector v(3);//constructor Vector(s) is executed/dynamic memory created
+    Vector<int> v(3);//constructor Vector(s) is executed/dynamic memory created
 }
 
 void use_heap_vector()
 {
-    Vector* v = new Vector(3);//create dynamic memory
+    Vector<int>* v = new Vector<int>(3);//create dynamic memory
     //use memory
     delete v;//delete memory
 }
 
-Vector get_vector()
+Vector<int> get_vector()
 {
-    Vector v(3);
+    Vector<int> v(3);
     return v;
 }
